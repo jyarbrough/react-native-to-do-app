@@ -1,21 +1,38 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {
     View,
     Text,
     StyleSheet,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
+    TextInput
 } from 'react-native';
 
 const {height, width} = Dimensions.get('window');
 
 class TodoList extends Component {
 
-    state = {
-        isEditing: false,
-        isCompleted: false,
-        todoValue: ''
+    constructor(props){
+        super(props);
+
+        this.state = {
+            isEditing: false,
+            todoValue: props.textValue
+        }
+    }
+
+    static propTypes = {
+        textValue: PropTypes.string.isRequired,
+        isCompleted: PropTypes.bool.isRequired
     };
+
+    // state = {
+    //     dataIsReady: false,
+    //     isEditing: false,
+    //     isCompleted: false,
+    //     todoValue: ''
+    // };
 
     toggleItem = () => {
         this.setState(prevState => {
@@ -26,10 +43,10 @@ class TodoList extends Component {
     };
 
     startEditing = () => {
-        const {textValue} = this.props;
+        // const {textValue} = this.props;
         this.setState({
             isEditing: true,
-            todoValue: textValue
+            // todoValue: textValue
         });
     };
 
@@ -49,6 +66,7 @@ class TodoList extends Component {
         const {isEditing, isCompleted, todoValue} = this.state;
 
         return (
+
             <View style={styles.container}>
                 <View style={styles.rowContainer}>
                     <TouchableOpacity onPress={this.toggleItem}>
@@ -61,12 +79,30 @@ class TodoList extends Component {
 
                         </View>
                     </TouchableOpacity>
-                    <Text style={[
-                        styles.text,
-                        isCompleted ? styles.strikeText : styles.unStrikeText
-                    ]}>
-                        Todo List will show here
-                    </Text>
+                    {isEditing ? (
+                        <TextInput
+                            value={todoValue}
+                            style={[
+                                styles.text,
+                                styles.input,
+                                isCompleted ? styles.strikeText : styles.unStrikeText
+                            ]}
+                            multiline={true}
+                            returnKeyType={'done'}
+                            onBlur={this.finishEditing}
+                            onChangeText={this.controlInput}
+                        />
+                    ) : (
+                        <Text
+                            style={[
+                                styles.text,
+                                isCompleted ? styles.strikeText : styles.unStrikeText
+                            ]}
+                        >
+                            {todoValue}
+                        </Text>
+                    )}
+
                 </View>
                 {isEditing ? (
                     <View style={styles.buttons}>
